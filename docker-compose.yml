@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: banking-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: changeme
+      MYSQL_DATABASE: onlinebanking
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pchangeme"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  userfront:
+    build:
+      context: ./UserFront
+    container_name: banking-userfront
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/onlinebanking?useSSL=false&allowPublicKeyRetrieval=true
+      DB_USER: root
+      DB_PASSWORD: changeme
+    ports:
+      - "8081:8080"
+
+  adminportal:
+    build:
+      context: ./AdminPortal
+    container_name: banking-adminportal
+    depends_on:
+      - userfront
+    ports:
+      - "80:80"
+
+  jenkins:
+    build:
+      context: .
+      dockerfile: Jenkins.Dockerfile
+    container_name: banking-jenkins
+    user: root
+    ports:
+      - "8090:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - //var/run/docker.sock:/var/run/docker.sock
+      - C:/Users/MSI/Downloads/Online-Banking-with-Java-Spring-Boot-Angular-2-master/Online-Banking-with-Java-Spring-Boot-Angular-2-master:/workspace
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  jenkins_home:

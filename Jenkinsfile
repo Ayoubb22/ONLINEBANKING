@@ -12,10 +12,19 @@ pipeline {
             }
         }
 
+        stage('Diagnostic') {
+            steps {
+                sh 'echo PATH=$PATH'
+                sh 'which mvn || echo "mvn not in PATH"'
+                sh 'ls -la /usr/bin/mvn || echo "no /usr/bin/mvn"'
+                sh '/usr/bin/mvn -version || echo "absolute path failed too"'
+            }
+        }
+
         stage('Build & Test - UserFront') {
             steps {
                 dir('UserFront') {
-                    sh 'mvn clean package'
+                    sh '/usr/bin/mvn clean package'
                 }
             }
         }

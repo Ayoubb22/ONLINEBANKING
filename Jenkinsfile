@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        COMPOSE_PROJECT = "online-banking-with-java-spring-boot-angular-2-master"
+        COMPOSE_PROJECT_NAME = "online-banking"
     }
 
     stages {
@@ -22,7 +22,7 @@ pipeline {
 
         stage('Build Docker Images') {
             steps {
-                sh 'docker compose build userfront adminportal'
+                sh 'docker compose -p online-banking build userfront adminportal'
             }
         }
 
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 sh 'docker rm -f banking-userfront banking-adminportal || true'
 
-                sh 'docker compose up -d --no-deps userfront adminportal'
+                sh 'docker compose -p online-banking up -d --no-deps userfront adminportal'
             }
         }
     }

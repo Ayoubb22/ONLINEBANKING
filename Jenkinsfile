@@ -1,8 +1,8 @@
-pipeline {
+﻿pipeline {
     agent any
 
     environment {
-        COMPOSE_PROJECT_NAME = "online-banking"
+        COMPOSE_PROJECT = "online-banking"
     }
 
     stages {
@@ -28,9 +28,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker rm -f banking-userfront banking-adminportal || true'
-
-                sh 'docker compose -p online-banking up -d --no-deps userfront adminportal'
+                sh 'docker compose -p online-banking up -d'
             }
         }
     }

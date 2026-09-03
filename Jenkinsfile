@@ -28,7 +28,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker compose -p online-banking up -d'
+                sh 'docker compose -p online-banking up -d mysql userfront adminportal'
             }
         }
     }

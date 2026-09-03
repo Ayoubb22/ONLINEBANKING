@@ -1,4 +1,4 @@
-version: "3.8"
+﻿version: "3.8"
 
 services:
   mysql:
@@ -38,7 +38,7 @@ services:
     depends_on:
       - userfront
     ports:
-      - "80:80"
+      - "8082:80"
 
   jenkins:
     build:

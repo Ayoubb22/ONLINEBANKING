@@ -55,3 +55,37 @@ Then access:
 - Admin Portal: http://localhost
 - Jenkins: http://localhost:8090
 
+
+## DevOps / CI-CD Setup
+
+This project has been containerized and equipped with a full CI/CD pipeline:
+
+### Docker
+
+- **UserFront** (Spring Boot) and **AdminPortal** (Angular, served via nginx) are each built as separate Docker images using multi-stage Dockerfiles (Maven/JDK build stage -> lightweight JRE/nginx runtime stage).
+- **MySQL 5.7** runs as a containerized service with a healthcheck, persisted via a named volume (`mysql_data`).
+- All services are orchestrated with `docker-compose.yml`:
+  - `mysql` - database, exposed on port 3306
+  - `userfront` - Spring Boot backend, exposed on port 8081
+  - `adminportal` - nginx-served Angular frontend, exposed on port 8082
+  - `jenkins` - CI/CD server, exposed on port 8090
+
+### Jenkins CI/CD
+
+- Jenkins runs in its own Docker container, built from a custom image (`Jenkins.Dockerfile`) that adds the Docker CLI and Docker Compose plugin on top of the official `jenkins/jenkins:lts-jdk17` image.
+- The Docker socket (`/var/run/docker.sock`) is mounted into the Jenkins container, allowing Jenkins to build images and manage containers directly on the host.
+- The project workspace is bind-mounted into the Jenkins container at `/workspace`.
+- Jenkins home (plugins, jobs, credentials) is persisted via the named volume `jenkins_home`.
+- A GitHub webhook triggers Jenkins automatically on every push to `main`, running the pipeline: **checkout -> Maven build -> Docker image build -> deploy**.
+
+### Quick start
+
+```bash
+docker compose -p online-banking up -d
+```
+
+Then access:
+- User Frontend: http://localhost:8081
+
+- Admin Portal: http://localhost:8082
+- Jenkins: http://localhost:8090

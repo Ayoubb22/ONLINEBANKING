@@ -28,7 +28,8 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker compose up -d userfront adminportal'
+                sh 'docker compose up -d --no-deps userfront adminportal'
+
             }
         }
     }

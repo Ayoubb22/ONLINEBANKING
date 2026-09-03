@@ -28,8 +28,9 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker compose up -d --no-deps userfront adminportal'
+                sh 'docker rm -f banking-userfront banking-adminportal || true'
 
+                sh 'docker compose up -d --no-deps userfront adminportal'
             }
         }
     }
